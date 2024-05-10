@@ -1,116 +1,142 @@
+<script setup>
+import { ref } from 'vue'
+import {useI18n} from "vue-i18n";
+import qLangEs from 'quasar/lang/es'
+import qLangEn from 'quasar/lang/en-US'
+import {useQuasar} from "quasar";
+
+const { locale, t } = useI18n({ useScope: 'global' })
+const leftDrawerOpen = ref(false)
+const $q = useQuasar();
+
+const toggleLeftDrawer =  () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+const localeOptions = [
+  { value: 'en-US', label: t('English'), lang: qLangEn },
+  { value: 'es', label: 'Spanish',lang: qLangEs }
+]
+
+const setLang = (lang) => {
+  $q.lang.set(localeOptions.filter(locale => locale.value === lang)[0].lang)
+  alert($q.lang.isoName)
+}
+
+</script>
+
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpR fFf">
+
+    <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
-          Quasar App
+          <img class="q-mt-sm" style="width: 300px;" src="/src/assets/img/Marca1.svg">
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-select
+          v-model="locale"
+          :options="localeOptions"
+          label="Language"
+          label-color="white"
+          color="black"
+          dense
+          borderless
+          emit-value
+          map-options
+          options-dense
+          style="min-width: 80px"
+          @update:model-value="setLang"
+        />
       </q-toolbar>
+
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+      <q-list bordered padding class="rounded-borders" style="max-width: 350px">
+        <q-item-label header>Menu Principal</q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item to="/" clickable v-ripple>
+          <q-item-section avatar top>
+            <q-avatar rounded>
+              <img src="/src/assets/img/Conversión.svg" alt="">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label lines="1">Conversion</q-item-label>
+            <q-item-label caption>Convertir Audio a Texto</q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-icon name="info" color="green" />
+          </q-item-section>
+        </q-item>
+
+        <q-item to="/history" clickable v-ripple>
+          <q-item-section avatar top>
+            <q-avatar rounded>
+              <img src="/src/assets/img/Historial.svg" alt="">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label lines="1">Historial</q-item-label>
+            <q-item-label caption>Mis Conversiones</q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-icon name="info" />
+          </q-item-section>
+        </q-item>
+
+        <q-separator spaced />
+        <q-item-label header>Acerca</q-item-label>
+
+        <q-item clickable v-ripple>
+          <q-item-section avatar top>
+            <q-avatar rounded>
+              <img src="/src/assets/img/about.svg" alt="">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label lines="1">BTEX</q-item-label>
+            <q-item-label caption>Descripcion del Sistema</q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-icon name="info" />
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple>
+          <q-item-section avatar top>
+            <q-avatar rounded>
+              <img src="/src/assets/img/Desarr.svg" alt="">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label lines="1">Desarrolladores</q-item-label>
+            <q-item-label caption>Datos de Contacto</q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-icon name="info" color="amber" />
+          </q-item-section>
+        </q-item>
+
       </q-list>
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
   </q-layout>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+<style scoped>
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-export default defineComponent({
-  name: 'MainLayout',
-
-  components: {
-    EssentialLink
-  },
-
-  setup () {
-    const leftDrawerOpen = ref(false)
-
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
-  }
-})
-</script>
+</style>
