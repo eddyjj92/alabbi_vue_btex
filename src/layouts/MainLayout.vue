@@ -1,26 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import {useI18n} from "vue-i18n";
-import qLangEs from 'quasar/lang/es'
-import qLangEn from 'quasar/lang/en-US'
 import {useQuasar} from "quasar";
+import es from 'quasar/lang/es';
 
-const { locale, t } = useI18n({ useScope: 'global' })
+
+const { t, locale } = useI18n({ useScope: 'global' })
+
 const leftDrawerOpen = ref(false)
 const $q = useQuasar();
 
+
+onMounted(() => {
+  $q.lang.set(es)
+})
+
 const toggleLeftDrawer =  () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
-const localeOptions = [
-  { value: 'en-US', label: t('English'), lang: qLangEn },
-  { value: 'es', label: 'Spanish',lang: qLangEs }
-]
-
-const setLang = (lang) => {
-  $q.lang.set(localeOptions.filter(locale => locale.value === lang)[0].lang)
-  alert($q.lang.isoName)
 }
 
 </script>
@@ -36,8 +32,9 @@ const setLang = (lang) => {
         </q-toolbar-title>
         <q-select
           v-model="locale"
-          :options="localeOptions"
-          label="Language"
+          :options="[{ label: 'EN', value: 'en-US'},
+                 { label: 'ES', value: 'es'}]"
+          :label="$t('language')"
           label-color="white"
           color="black"
           dense
@@ -46,7 +43,6 @@ const setLang = (lang) => {
           map-options
           options-dense
           style="min-width: 80px"
-          @update:model-value="setLang"
         />
       </q-toolbar>
 
@@ -131,7 +127,7 @@ const setLang = (lang) => {
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view :locale="locale" />
     </q-page-container>
 
   </q-layout>

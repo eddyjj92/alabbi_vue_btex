@@ -1,12 +1,16 @@
 <script setup>
 import { useQuasar, QSpinnerFacebook } from 'quasar'
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, onUpdated, reactive, ref} from "vue";
 import axios from "axios";
 import PreviewDialog from "components/PreviewDialog.vue";
 import { useI18n } from "vue-i18n"
 
+const props = defineProps({
+  locale: String
+})
+
 const $q = useQuasar()
-const { t } = useI18n({ useScope: 'global' })
+let { t, locale } = useI18n({ useScope: 'global' })
 
 const loadingOptions = {
     spinner: QSpinnerFacebook,
@@ -39,12 +43,15 @@ let process = reactive({
 });
 
 const metodos = [
-    { label: t('Archivos locales'), value: 'local' },
+    { label: 'local_files', value: 'local' },
     { label: 'Grabacion por Microfono', value: 'mic' },
     { label: 'Archivos en la Nube', value: 'nube' }
 ]
 
-let connection = null;
+onUpdated(() => {
+  locale = props.locale
+})
+
 onMounted(()=> {
     consoleAddText(process.consoleLength + " - " + "Bienvenidos a BTEX (Convertidor de Audio a Texto)" + "\n")
 
@@ -242,7 +249,7 @@ const getLogs = async () => {
             reader.readAsText(res.data);
             reader.onload = onLoad;
         })
-        .catch(function (error) {
+        .catch(function () {
             clearInterval(interval.value);
         })
 
@@ -288,8 +295,8 @@ const openDialog = () => {
       <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 q-pa-sm">
         <q-card dark bordered class="my-card">
           <q-card-section>
-            <div class="text-h6">Métodos de Entrada</div>
-            <div class="text-subtitle2">Seleccione un Metodo de Entrada de Audio</div>
+            <div class="text-h6">{{$t('entry_methods')}}</div>
+            <div class="text-subtitle2">{{$t('select_an_audio_input_method')}}</div>
           </q-card-section>
 
           <q-separator dark inset />
@@ -302,7 +309,14 @@ const openDialog = () => {
                 type="radio"
                 v-model="process.metodo"
                 @update:model-value="validaRadio"
-              />
+              >
+                <template v-slot:label="opt">
+                  <div class="row items-center">
+                    <span>{{ $t(`${opt.label}`) }}</span>
+                    <q-icon :name="opt.icon" color="teal" size="1.5em" class="q-ml-sm" />
+                  </div>
+                </template>
+              </q-option-group>
               <input type="file" ref="inputFile" hidden @change="setFile($event)">
               <div class="col-2">
                 <div style="width: 100%; cursor: pointer" @click="process.metodo = 'local'; inputFile.click()">
@@ -378,7 +392,7 @@ const openDialog = () => {
       <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 q-pa-sm q-pa-sm">
         <q-card dark bordered class="my-card">
           <q-card-section>
-            <div class="text-h6">Procesamiento</div>
+            <div class="text-h6">{{$t('process')}}</div>
             <div class="text-subtitle2">Salida de Consola</div>
           </q-card-section>
 
