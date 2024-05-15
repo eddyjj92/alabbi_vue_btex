@@ -4,7 +4,7 @@
 export default {
   'failed': 'Action failed',
   'success': 'Action was successful',
-  'local_files': 'Local files',
+  'local_file': 'Local file',
   'english': 'English',
   'language': 'Language',
   'process': 'Process',
@@ -18,6 +18,11 @@ export default {
   'about': 'About',
   'system_description': 'System Description',
   'developers': 'Developers',
-  'contact_information': 'Contact Information'
+  'contact_information': 'Contact Information',
+  'microphone_recording': 'Microphone recording',
+  'file_in_the_cloud': 'File in the Cloud',
+  'console_output': 'Console Output',
+  'output_files': 'Output Files'
+
 
 }

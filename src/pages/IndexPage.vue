@@ -6,7 +6,7 @@ import PreviewDialog from "components/PreviewDialog.vue";
 import { useI18n } from "vue-i18n"
 
 const props = defineProps({
-  locale: String
+  localee: String
 })
 
 const $q = useQuasar()
@@ -43,13 +43,13 @@ let process = reactive({
 });
 
 const metodos = [
-    { label: 'local_files', value: 'local' },
-    { label: 'Grabacion por Microfono', value: 'mic' },
-    { label: 'Archivos en la Nube', value: 'nube' }
+    { label: 'local_file', value: 'local' },
+    { label: 'microphone_recording', value: 'mic' },
+    { label: 'file_in_the_cloud', value: 'nube' }
 ]
 
 onUpdated(() => {
-  locale = props.locale
+  locale = props.localee
 })
 
 onMounted(()=> {
@@ -65,7 +65,6 @@ onMounted(()=> {
         process.output = process.input.replace(process.inputFormat, process.outputFormat);
         process.outputDir = historyItem.Route + historyItem.Folder;
         process.outputFolder = historyItem.Folder;
-
         openDialog()
     }
 
@@ -344,8 +343,8 @@ const openDialog = () => {
       <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 q-pa-sm">
         <q-card dark bordered class="my-card">
           <q-card-section>
-            <div class="text-h6">Archivos de Salida</div>
-            <div class="text-subtitle2">Archivos de Salida Resultado Conversion</div>
+            <div class="text-h6">{{$t('output_files')}}</div>
+            <div class="text-subtitle2">Resultado de la Conversion</div>
           </q-card-section>
 
           <q-separator dark inset />
@@ -393,7 +392,7 @@ const openDialog = () => {
         <q-card dark bordered class="my-card">
           <q-card-section>
             <div class="text-h6">{{$t('process')}}</div>
-            <div class="text-subtitle2">Salida de Consola</div>
+            <div class="text-subtitle2">{{$t('console_output')}}</div>
           </q-card-section>
 
           <q-separator dark inset />
