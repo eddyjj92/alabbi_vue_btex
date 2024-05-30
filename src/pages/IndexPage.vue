@@ -3,14 +3,19 @@ import { useQuasar, QSpinnerFacebook } from 'quasar'
 import {computed, onMounted, onUpdated, reactive, ref} from "vue";
 import axios from "axios";
 import PreviewDialog from "components/PreviewDialog.vue";
-import { useI18n } from "vue-i18n"
+import { useI18n } from "vue-i18n";
+import {useConversionStore} from "stores/conversion-store.js";
+
+const { uploadFile } = useConversionStore();
 
 const props = defineProps({
-  locale: String
+  locale: String,
+  model: Object
 })
 
 const $q = useQuasar()
 let { t, locale } = useI18n({ useScope: 'global' })
+
 
 const loadingOptions = {
     spinner: QSpinnerFacebook,
@@ -82,49 +87,41 @@ const setFile = async (e) => {
     if (e.target.files.length > 0){
         await consoleAddText(process.consoleLength + " - " + "Importando archivo local..." + "\n")
         await $q.loading.show(loadingOptions)
-        await axios('http://localhost:3000/api/conversion/upload',{
-            method: 'post',
-            data: {
-                file: e.target.files[0]
-            },
-            headers:{
-                'Content-Type': 'multipart/form-data;'
-            },
-        })
-            .then(function (res) {
-                consoleAddText(process.consoleLength + " - " + res.data.message + "\n")
-                process.input = res.data.ruta
-                process.inputFilename = res.data.filename
-                process.inputFormat = res.data.extension
-                process.output = res.data.ruta.replace(process.inputFormat, process.outputFormat)
-                process.outputDir = res.data.outputDir
-                process.outputFolder = res.data.folder
-            })
-            .catch(function (error) {
-                process.metodo = null
-                if (error.response.status === 400){
-                    consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + error.response.data.validator + "\n")
-                } else {
-                    if (error.response.data.error){
-                        consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + error.response.data.error + "\n")
-                    }else{
-                        consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + error.message + "\n")
-                    }
-                }
-            })
-            .finally(()=> {
-                $q.loading.hide()
-            })
+        const result = await uploadFile(e.target.files[0])
+        if (await result && await result.success){
+          consoleAddText(process.consoleLength + " - " + result.data.message + "\n")
+          process.input = result.data.ruta
+          process.inputFilename = result.data.filename
+          process.inputFormat = result.data.extension
+          process.output = result.data.ruta.replace(process.inputFormat, process.outputFormat)
+          process.outputDir = result.data.outputDir
+          process.outputFolder = result.data.folder
+        }else{
+          process.metodo = null
+          if (result.data.response.status === 400){
+            consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + result.data.response.data.validator + "\n")
+          } else {
+            if (result.data.response.data.error){
+              consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + result.data.response.data.error + "\n")
+            }else{
+              consoleAddText(process.consoleLength + " - Ha ocurrido un error: " + result.data.message + "\n")
+            }
+          }
+        }
+        await $q.loading.hide()
     }
 }
 
 const start = async () => {
+  alert(props.locale !== 'es')
     await axios('http://localhost:3000/api/conversion/start',{
         method: 'post',
         data: {
             input: process.input,
             output_format: process.outputFormat,
-            output_dir: process.outputDir
+            output_dir: process.outputDir,
+            model: props.model,
+            translate: props.locale !== 'es'
         },
         headers:{
             'Content-Type': 'multipart/form-data;'

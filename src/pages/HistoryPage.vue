@@ -1,7 +1,7 @@
 <script setup>
 import { useQuasar, QSpinnerFacebook } from 'quasar'
 import {computed, onMounted, reactive, ref} from "vue";
-import {useProcessStore} from "stores/process.js";
+import {useProcessStore} from "stores/process-store.js";
 import {useRouter} from "vue-router";
 
 

@@ -19,6 +19,15 @@ const toggleLeftDrawer =  () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
+
+let modelo = ref('small');
+
+const modelos = [
+  { label: 'Pequeño (Prioridad: Velocidad)', value: 'small' },
+  { label: 'Medio (Prioridad: Equilibrado)', value: 'medium' },
+  { label: 'Grande (Prioridad: Eficiencia)', value: 'large-v2' }
+]
+
 </script>
 
 <template>
@@ -50,7 +59,7 @@ const toggleLeftDrawer =  () => {
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <q-list bordered padding class="rounded-borders" style="max-width: 350px">
-        <q-item-label header>{{$t('main_menu')}}</q-item-label>
+        <q-item-label header class="text-bold">{{$t('main_menu')}}</q-item-label>
 
         <q-item to="/" clickable v-ripple>
           <q-item-section avatar top>
@@ -87,7 +96,7 @@ const toggleLeftDrawer =  () => {
         </q-item>
 
         <q-separator spaced />
-        <q-item-label header>{{$t('about')}}</q-item-label>
+        <q-item-label header class="text-bold">{{$t('about')}}</q-item-label>
 
         <q-item clickable v-ripple>
           <q-item-section avatar top>
@@ -122,12 +131,23 @@ const toggleLeftDrawer =  () => {
             <q-icon name="info" color="amber" />
           </q-item-section>
         </q-item>
-
       </q-list>
+      <q-card>
+        <q-card-section class="q-pb-sm">
+          <span class="text-bold">Modelos de Conversion</span>
+        </q-card-section>
+        <q-card-section class="q-py-xs ">
+          <q-option-group
+            :options="modelos"
+            type="radio"
+            v-model="modelo"
+          />
+        </q-card-section>
+      </q-card>
     </q-drawer>
 
     <q-page-container>
-      <router-view :locale="locale" />
+      <router-view :locale="locale" :model="modelo" />
     </q-page-container>
 
   </q-layout>
