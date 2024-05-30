@@ -113,7 +113,6 @@ const setFile = async (e) => {
 }
 
 const start = async () => {
-  alert(props.locale !== 'es')
     await axios('http://localhost:3000/api/conversion/start',{
         method: 'post',
         data: {
